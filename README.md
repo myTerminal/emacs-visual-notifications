@@ -5,6 +5,8 @@
 
 A utility to create visual notifications in emacs
 
+![Demo](images/demo.gif)
+
 ## Installation
 
 ### Manual
