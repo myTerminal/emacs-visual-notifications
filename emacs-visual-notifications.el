@@ -89,7 +89,7 @@
                        (+ duration-on duration-off)
                        (lambda (x)
                          (emacs-visual-notifications--flash-screen duration-on)
-                         (incf counter)
+                         (cl-incf counter)
                          (cond ((= counter
                                    count) (cancel-timer timer))))
                        t))))
