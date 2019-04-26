@@ -7,7 +7,7 @@
 ;; Keywords: library
 ;; Maintainer: Mohammed Ismail Ansari <team.terminal@gmail.com>
 ;; Created: 2017/09/07
-;; Package-Requires: ((emacs "24") (cl-lib "0.5"))
+;; Package-Requires: ((emacs "24"))
 ;; Description: A utility to create visual notifications in emacs
 ;; URL: http://ismail.teamfluxion.com
 ;; Compatibility: Emacs24
@@ -71,8 +71,6 @@
 
 ;;; Code:
 
-(require 'cl-lib)
-
 ;;;###autoload
 (defun emacs-visual-notification-flash-once (duration-on)
   "Flashes the screen once"
@@ -90,7 +88,7 @@
                        (+ duration-on duration-off)
                        (lambda (x)
                          (emacs-visual-notifications--flash-screen duration-on)
-                         (cl-incf counter)
+                         (incf counter)
                          (cond ((= counter
                                    count) (cancel-timer timer))))
                        t))))
