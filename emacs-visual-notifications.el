@@ -1,4 +1,4 @@
-;;; emacs-visual-notifications.el --- A utility to create visual notifications in emacs -*- lexical-binding: t; coding: utf-8; -*-
+;;; emacs-visual-notifications.el --- A utility to create visual notifications in emacs -*- lexical-binding: t; -*-
 
 ;; This file is not part of Emacs
 
