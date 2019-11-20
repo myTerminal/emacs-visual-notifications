@@ -29,25 +29,28 @@ If you have Marmalade added as a repository to your Emacs, you can just install 
 
 ## Usage
 
-Currently, the following notifications are supported
+The following notifications are supported currently
 
-1. flash once
+1. Flash once
 
-    (emacs-visual-notification-flash-once 1)
+    (emacs-visual-notifications-notify-short)
 
-The above code flashes the screen only once for *1* second
+The above function flashes the screen only once
 
-2. flash for a particular number of times
+2. Flash thrice
 
-    (emacs-visual-notification-flash 3
-        1
-        2)
+    (emacs-visual-notifications-notify-long)
 
-The above code flashes the screen *3* times, the flash lasts for *1* second and the gap between two flashes is *2* seconds
+The above function flashes the screen thrice
 
-3. flash until user interaction **(coming soon)**
+3. Flash a certain number of time
 
-    (emacs-visual-notification-flash-until-active 1
-        2)
+    (emacs-visual-notifications-notify-times 5)
 
-The above code flashes the screen until the user performs any gesture. The flash lasts for *1* second and the gap between two flashes is *2* seconds.
+The above function flashes the screen 5 times as specified
+
+4. Flash until dismissed
+
+    (emacs-visual-notifications-notify-continuous)
+
+The above function flashes the screen until the user dismisses the notification.

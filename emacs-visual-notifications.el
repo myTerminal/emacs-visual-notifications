@@ -3,11 +3,11 @@
 ;; This file is not part of Emacs
 
 ;; Author: Mohammed Ismail Ansari <team.terminal@gmail.com>
-;; Version: 1.0
+;; Version: 1.1
 ;; Keywords: library
 ;; Maintainer: Mohammed Ismail Ansari <team.terminal@gmail.com>
 ;; Created: 2017/09/07
-;; Package-Requires: ((emacs "24"))
+;; Package-Requires: ((emacs "24") (cl-lib "0.5"))
 ;; Description: A utility to create visual notifications in emacs
 ;; URL: http://ismail.teamfluxion.com
 ;; Compatibility: Emacs24
@@ -35,28 +35,30 @@
 ;;
 ;; Currently, the following notifications are supported
 ;;
-;; 1. flash once
+;; 1. Flash once
 ;;
-;;     (emacs-visual-notification-flash-once 1)
+;;     (emacs-visual-notifications-notify-short)
 ;;
-;; The above code flashes the screen only once for 1 second
+;; The above function flashes the screen only once
 ;;
-;; 2. flash for a particular number of times
+;; 2. Flash thrice
 ;;
-;;     (emacs-visual-notification-flash 3
-;;         1
-;;         2)
+;;     (emacs-visual-notifications-notify-long)
 ;;
-;; The above code flashes the screen 3 times, the flash lasts for 1 second
-;; and the gap between two flashes is 2 seconds
+;; The above function flashes the screen thrice
 ;;
-;; 3. flash until user interaction (coming soon)
+;; 3. Flash a certain number of times
 ;;
-;;     (emacs-visual-notification-flash-until-active 1
-;;         2)
+;;     (emacs-visual-notifications-notify-times 5)
 ;;
-;; The above code flashes the screen until the user performs any gesture. The
-;; flash lasts for 1 second and the gap between two flashes is 2 seconds.
+;; The above function flashes the screen 5 times as specified
+;;
+;; 4. Flash until dismissed
+;;
+;;     (emacs-visual-notifications-notify-continuous)
+;;
+;; The above function flashes the screen until the user dismisses the
+;; notification.
 ;;
 
 ;;; Commentary:
@@ -71,41 +73,87 @@
 
 ;;; Code:
 
-;;;###autoload
-(defun emacs-visual-notification-flash-once (duration-on)
-  "Flashes the screen once"
-  (interactive)
-  (emacs-visual-notifications--flash-screen duration-on))
+(require 'cl-lib)
+
+(defvar emacs-visual-notifications-timer
+  nil)
+
+(defvar emacs-visual-notifications-focusp
+  t)
+
+(defun emacs-visual-notifications-flash-half ()
+  "Performs a half-flash"
+  (invert-face 'fringe)
+  (invert-face 'mode-line))
+
+(defun emacs-visual-notifications-flash-once ()
+  "Flashes screen once"
+  (emacs-visual-notifications-flash-half)
+  (run-at-time 0.7
+               nil
+               'emacs-visual-notifications-flash-half))
 
 ;;;###autoload
-(defun emacs-visual-notification-flash (count duration-on duration-off)
-  "Flashes the screen repeatedly"
+(defun emacs-visual-notifications-dismiss-notifications ()
+  "Dismiss notifications"
+  (interactive)
+  (cond ((null emacs-visual-notifications-timer) (message "No notification to dismiss!"))
+        (t (cancel-timer emacs-visual-notifications-timer))))
+
+;;;###autoload
+(defun emacs-visual-notifications-notify-short ()
+  "Triggers a short notification"
+  (if emacs-visual-notifications-focusp
+      (emacs-visual-notifications-flash-once)
+    (ding)))
+
+;;;###autoload
+(defun emacs-visual-notifications-notify-long ()
+  "Triggers a long notification"
+  (if emacs-visual-notifications-focusp
+      (progn
+        (emacs-visual-notifications-flash-once)
+        (run-at-time 1.5
+                     nil
+                     (lambda ()
+                       (emacs-visual-notifications-flash-once)
+                       (run-at-time 1.5
+                                    nil
+                                    'emacs-visual-notifications-flash-once))))
+    (ding)))
+
+;;;###autoload
+(defun emacs-visual-notifications-notify-times (count)
+  "Triggers a notification for the specified number of times"
   (interactive)
   (let ((counter 0)
         (timer nil))
     (setq timer
           (run-at-time 0
-                       (+ duration-on duration-off)
-                       (lambda (x)
-                         (emacs-visual-notifications--flash-screen duration-on)
-                         (incf counter)
+                       1.5
+                       (lambda ()
+                         (emacs-visual-notifications-flash-once)
+                         (cl-incf counter)
                          (cond ((= counter
-                                   count) (cancel-timer timer))))
-                       t))))
+                                   count) (cancel-timer timer))))))))
 
 ;;;###autoload
-(defun emacs-visual-notification-flash-until-active (duration-on duration-off)
-  "Flashes the screen repeatedly until user action"
-  (interactive)
-  (message "Not implemented"))
+(defun emacs-visual-notifications-notify-continuous ()
+  "Triggers a continuous notification until dismissed"
+  (emacs-visual-notifications-dismiss-notifications)
+  (setq emacs-visual-notifications-timer
+        (run-at-time 0
+                     1.5
+                     'emacs-visual-notifications-flash-once)))
 
-(defun emacs-visual-notifications--flash-screen (duration-on)
-  (invert-face 'default)
-  (run-at-time duration-on
-               nil
-               (lambda (x)
-                 (invert-face 'default))
-               t))
+(add-hook 'focus-in-hook
+          (lambda ()
+            (setq emacs-visual-notifications-focusp
+                  t)))
+(add-hook 'focus-out-hook
+          (lambda ()
+            (setq emacs-visual-notifications-focusp
+                  nil)))
 
 (provide 'emacs-visual-notifications)
 
