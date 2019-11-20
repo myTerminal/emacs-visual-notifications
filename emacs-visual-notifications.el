@@ -84,7 +84,8 @@
 (defun emacs-visual-notifications-flash-half ()
   "Performs a half-flash"
   (invert-face 'fringe)
-  (invert-face 'mode-line))
+  (invert-face 'mode-line)
+  (invert-face 'mode-line-inactive))
 
 (defun emacs-visual-notifications-flash-once ()
   "Flashes screen once"
