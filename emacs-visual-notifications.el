@@ -82,13 +82,13 @@
   t)
 
 (defun emacs-visual-notifications-flash-half ()
-  "Performs a half-flash"
+  "Performs a half-flash."
   (invert-face 'fringe)
   (invert-face 'mode-line)
   (invert-face 'mode-line-inactive))
 
 (defun emacs-visual-notifications-flash-once ()
-  "Flashes screen once"
+  "Flashes screen once."
   (emacs-visual-notifications-flash-half)
   (run-at-time 0.7
                nil
@@ -96,21 +96,21 @@
 
 ;;;###autoload
 (defun emacs-visual-notifications-dismiss-notifications ()
-  "Dismiss notifications"
+  "Dismisses notifications."
   (interactive)
   (cond ((null emacs-visual-notifications-timer) (message "No notification to dismiss!"))
         (t (cancel-timer emacs-visual-notifications-timer))))
 
 ;;;###autoload
 (defun emacs-visual-notifications-notify-short ()
-  "Triggers a short notification"
+  "Triggers a short notification."
   (if emacs-visual-notifications-focusp
       (emacs-visual-notifications-flash-once)
     (ding)))
 
 ;;;###autoload
 (defun emacs-visual-notifications-notify-long ()
-  "Triggers a long notification"
+  "Triggers a long notification."
   (if emacs-visual-notifications-focusp
       (progn
         (emacs-visual-notifications-flash-once)
@@ -125,7 +125,7 @@
 
 ;;;###autoload
 (defun emacs-visual-notifications-notify-times (count)
-  "Triggers a notification for the specified number of times"
+  "Triggers a notification for the specified number of times."
   (interactive)
   (let ((counter 0)
         (timer nil))
@@ -140,7 +140,7 @@
 
 ;;;###autoload
 (defun emacs-visual-notifications-notify-continuous ()
-  "Triggers a continuous notification until dismissed"
+  "Triggers a continuous notification until dismissed."
   (emacs-visual-notifications-dismiss-notifications)
   (setq emacs-visual-notifications-timer
         (run-at-time 0
